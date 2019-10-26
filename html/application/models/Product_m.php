@@ -57,5 +57,27 @@
 				$picname=$this->upload->data("file_name");
 			return $picname;
 		}
+		function cal_jaego()
+		{
+			$sql="drop table if exists temp";
+			$this->db->query($sql);
+
+			$sql="create table temp (
+				no int not null auto_increment,
+				product_no int,
+				jaego int default 0,
+				primary key(no) );
+			";
+			$this->db->query($sql);
+
+			$sql="update product13 set jaego13=0;";
+			$this->db->query($sql);
+
+			$sql="insert into temp (product_no, jaego) select product_no13, sum(numi13)-sum(numo13) from jangbu13 group by product_no13;";
+			$this->db->query($sql);
+
+			$sql="update product13 inner join temp on product13.no13=temp.product_no set product13.jaego13=temp.jaego;";
+			$this->db->query($sql);
+		}
     }
 ?>

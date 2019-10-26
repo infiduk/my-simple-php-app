@@ -149,5 +149,16 @@
 				redirect("product/lists". $text1. $page);										//   목록화면으로 이동.
 			}
 		}
+		public function cal_jaego()
+		{
+			$this->load->helper(array("url", "date"));    //  helper 선언
+			$uri_array=$this->uri->uri_to_assoc(3);
+			$no=array_key_exists("no",$uri_array) ? $uri_array["no"] : "" ;
+			$text1=array_key_exists("text1",$uri_array) ? "/text1/" . urldecode($uri_array["text1"]) : "";
+			$page = array_key_exists("page",$uri_array) ? "/page/" . urldecode($uri_array["page"]) : "" ;
+
+			$this->product_m->cal_jaego();
+			redirect("product/lists". $text1. $page);
+		}
 	}
 ?>

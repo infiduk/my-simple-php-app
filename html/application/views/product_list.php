@@ -28,8 +28,9 @@ $tmp = $text1 ? "$text1/$page" : "/$page";   ?>
                         </div>
                     </div>
                 </div>
-                <div class="col-9" align="right">           
-                      <a href="/~four13/product/add<?=$tmp; ?>" class="btn btn-sm mycolor1">추가</a>
+                <div class="col-9" align="right">     
+                    <a href="/~four13/product/cal_jaego" class="btn btn-sm mycolor1">재고계산</a>
+                    <a href="/~four13/product/add<?=$tmp; ?>" class="btn btn-sm mycolor1">추가</a>
                 </div>
             </div>
         </form>
