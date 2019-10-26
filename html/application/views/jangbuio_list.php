@@ -6,6 +6,12 @@
     form1.action="/~four13/jangbuio/lists/text1/" + form1.text1.value + "/text2/" + form1.text2.value + "/text3/" + form1.text3.value + "/page";
     form1.submit();
 }
+function make_excel()
+{
+    form1.action="/~four13/jangbuio/excel/text1/" + form1.text1.value+"/text2/" + form1.text2.value +
+                          "/text3/" + form1.text3.value + "/page";
+    form1.submit();
+}      
 $(function() {
     $('#text1') .datetimepicker({
         locale: 'ko',
@@ -67,7 +73,7 @@ $page = array_key_exists("page",$uri_array) ? "page/" . urldecode($uri_array["pa
                                     echo("<option value='$row->no13'>$row->name13</option>");
                             }
                         ?>
-                        </select>
+                        <input type="button" value="EXCEL" class="form-control btn btn-sm mycolor1" onClick="if (confirm('엑셀파일로 저장할까요?')) make_excel();">
                     </div>
                 </div>
             </div>

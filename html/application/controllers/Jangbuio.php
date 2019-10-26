@@ -7,6 +7,7 @@
             $this->load->model("jangbuio_m");								// 모델 jangbuio_m 연결
 			$this->load->library("pagination");
 			$this->load->library('upload');
+			$this->load->library('PHPExcel');
 			$this->load->helper(array("url","date"));              // Helper 선언
 			date_default_timezone_set("Asia/Seoul");         // 지역설정
 			$today=date("Y-m-d");                                        // 오늘날짜
@@ -45,6 +46,78 @@
 			$this->	load->view("main_header");             // 상단출력(메뉴)
 			$this->load->view("jangbuio_list",$data);       // jangbuio_list에 자료전달
 			$this->load->view("main_footer");             // 하단 출력 
-        }
+		}
+		public function excel()
+		{
+			$uri_array=$this->uri->uri_to_assoc(3);
+			$text1 = array_key_exists("text1",$uri_array) ? urldecode($uri_array["text1"]) : date("Y-m-d", strtotime("-1 month"));
+			$text2 = array_key_exists("text2",$uri_array) ? urldecode($uri_array["text2"]) : date("Y-m-d");
+			$text3 = array_key_exists("text3",$uri_array) ? urldecode($uri_array["text3"]) : "0";
+			$page = array_key_exists("page",$uri_array) ? "/page/" . urldecode($uri_array["page"]) : "" ;
+
+			$count = $this->jangbuio_m->rowcount($text1,$text2,$text3);
+			$list = $this->jangbuio_m->getlist_all($text1,$text2,$text3);
+
+			$objPHPExcel = new PHPExcel();
+
+			$objPHPExcel->getActiveSheet()->getColumnDimension("A")->setWidth(12);
+			$objPHPExcel->getActiveSheet()->getColumnDimension("B")->setWidth(25);
+			$objPHPExcel->getActiveSheet()->getColumnDimension("C")->setWidth(12);
+			$objPHPExcel->getActiveSheet()->getColumnDimension("D")->setWidth(12);
+			$objPHPExcel->getActiveSheet()->getColumnDimension("E")->setWidth(12);
+			$objPHPExcel->getActiveSheet()->getColumnDimension("F")->setWidth(12);
+			$objPHPExcel->getActiveSheet()->getColumnDimension("G")->setWidth(12);
+
+			$objPHPExcel->getActiveSheet()->getStyle("A")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->getStyle("B")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+			$objPHPExcel->getActiveSheet()->getStyle("C:F")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+			$objPHPExcel->getActiveSheet()->getStyle("G")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue("A1", "매출입장");
+			$objPHPExcel->getActiveSheet()->getStyle('A1')->getFont()->setSize(13);
+			$objPHPExcel->getActiveSheet()->getStyle("A1")->getFont()->setBold(true);
+
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue("G1", "기간: $text1 - $text2");
+			$objPHPExcel->getActiveSheet()->getStyle("G1")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+			
+			$objPHPExcel->getActiveSheet()->getStyle("A2:G2")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$objPHPExcel->getActiveSheet()->getStyle("A2:G2")->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+			$objPHPExcel->getActiveSheet()->getStyle("A2:G2")->getFill()->getStartColor()->setARGB("FFCCCCCC");
+
+			$objPHPExcel->setActiveSheetIndex(0)
+				->setCellValue("A2","날짜")
+				->setCellValue("B2","제품명")
+				->setCellValue("C2","단가")
+				->setCellValue("D2","매입수량")
+				->setCellValue("E2","매출수량")
+				->setCellValue("F2","금액")
+				->setCellValue("G2","비고");
+
+			$i=3;
+			foreach ($list as $row)
+			{
+				$objPHPExcel->setActiveSheetIndex(0)
+					->setCellValue("A$i", $row->writeday13)
+					->setCellValue("B$i", $row->product_name)
+					->setCellValue("C$i", $row->price13 ? $row->price13 : "")
+					->setCellValue("D$i", $row->numi13 ? $row->numi13 : "")
+					->setCellValue("E$i", $row->numo13 ? $row->numo13 : "")
+					->setCellValue("F$i", $row->prices13 ? $row->prices13 : "")
+					->setCellValue("G$i", $row->bigo13);
+				$i++;
+			}
+			
+			$objPHPExcel->setActiveSheetIndex(0);
+
+			$fname="매출입장($text1 - $text2).xlsx";
+			$fname=iconv("UTF-8", "EUC-KR", $fname);
+			header("Content-Type: application/vnd.ms-excel");
+			header("COntent-Disposition: attachment;filename=$fname");
+			header("Cache-Control: max-age=0");
+			header("Cache-Control: max-age=1");
+
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel2007");
+			$objWriter->save("php://output");
+		}
 	}
 ?>

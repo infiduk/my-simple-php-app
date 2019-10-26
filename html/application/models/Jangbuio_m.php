@@ -22,5 +22,13 @@
 			$sql="select * from product13 order by name13";
 			return $this->db->query($sql)->result();
 		}
+		public function getlist_all($text1,$text2,$text3)
+		{
+			if ($text3=="0")    // 전체인 경우
+				$sql="select jangbu13.*, product13.name13 as product_name from jangbu13 left join product13 on jangbu13.product_no13=product13.no13 where jangbu13.writeday13 between'$text1' and '$text2' order by jangbu13.no13";
+			else
+				$sql="select jangbu13.*, product13.name13 as product_name from jangbu13 left join product13 on jangbu13.product_no13=product13.no13 where jangbu13.writeday13 between '$text1' and '$text2' and  jangbu13.product_no13=$text3 order by jangbu13.no13";
+			return $this->db->query($sql)->result();
+		}
     }
 ?>
