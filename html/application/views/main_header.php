@@ -49,12 +49,50 @@
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="/~four13/gubun">구분</a>
                             <a class="dropdown-item" href="/~four13/product">제품</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/~four13/member">사용자</a>		
+                            <?
+                                if($this->session->userdata('rank')==1)
+                                    echo("
+                            <div class='dropdown-divider'></div>
+                            <a class='dropdown-item' href='/~four13/member'>사용자</a>
+                                    ");
+                            ?>
                         </div>
                     </li>
                 </ul>
-    
-                <a class="btn btn-sm btn-outline-secondary btn-dark" href="#">로그인</a>
+                <?
+                if (!$this->session->userdata('uid'))
+                    echo("<a class='btn btn-sm btn-outline-secondary btn-dark' data-toggle='modal' href='#exampleModal'>로그인</a>");
+                else
+                    echo("<a class='btn btn-sm btn-outline-secondary btn-dark' href='/~four13/login/logout'>로그아웃</a>");
+                ?>
             </div>
         </nav>
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">로그인</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method='post' action="/~four13/login/check">
+                            <div class="form-group">
+                                <label for="uid" class="col-form-label">아이디</label>
+                                <input type="text" class="form-control" id="uid" name="uid">
+                            </div>
+                            <div class="form-group">
+                                <label for="pwd" class="col-form-label">비밀번호</label>
+                                <input type="password" class="form-control" id="pwd" name="pwd">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                            <button type="submit" class="btn btn-primary">로그인</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
